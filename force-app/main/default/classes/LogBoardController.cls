@@ -95,6 +95,7 @@ public with sharing class LogBoardController {
         return params;
     }
 
+    @SuppressWarnings('PMD.ApexSOQLInjection')
     @AuraEnabled(cacheable=false)
     public static List<Log> getDebugLogs(String filter) {
         List<Log> logWrappers = new List<Log>();
@@ -107,6 +108,8 @@ public with sharing class LogBoardController {
         }
         query += ' ORDER BY StartTime DESC LIMIT 100';
 
+        // query String may contain a single quioted variables in WHERE
+        // clasue so escapeSingleQuotes method cannot be applied
         List<ApexLog> logs = (List<ApexLog>)Database.query(query);
 
         for (ApexLog log : logs) {
@@ -285,7 +288,7 @@ public with sharing class LogBoardController {
 
     // Uppercase names are required because it used
     // to deserialize the response from Tooling API
-    @SuppressWarnings('PMD.VariableNamingConventions')
+    @SuppressWarnings('PMD.VariableNamingConventions, PMD.FieldNamingConventions')
     public class TraceFlagRecord {
         @AuraEnabled public Id Id;
         @AuraEnabled public Datetime ExpirationDate;
@@ -297,7 +300,7 @@ public with sharing class LogBoardController {
 
     // Uppercase name is required because it used
     // to deserialize the response from Tooling API
-    @SuppressWarnings('PMD.VariableNamingConventions')
+    @SuppressWarnings('PMD.VariableNamingConventions, PMD.FieldNamingConventions')
     public class DebugLevelRecord {
         @AuraEnabled public Id Id;
     }
